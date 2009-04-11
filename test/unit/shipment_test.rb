@@ -73,7 +73,7 @@ class ShipmentTest < ActiveSupport::TestCase
   # address_attributes with id
   # on an empty shipment
   # empty address wins
-  # FIXME
+  #FIXME? shouldn't address attributes win?
   test 'assigning empty id, nashville attributes to empty shipment' do
     hash = ActiveSupport::OrderedHash.new
     hash['address_id'] = ''
@@ -97,8 +97,8 @@ class ShipmentTest < ActiveSupport::TestCase
   # address_attributes with id
   # address_id empty
   # on an empty shipment
-  # address_id wins
-  #FIXME
+  # empty address wins
+  #FIXME? shouldn't address attributes win?
   test 'assigning nashville attributes, empty id to empty shipment' do
     hash = ActiveSupport::OrderedHash.new
     hash['address_attributes'] = @nashville.attributes
@@ -189,7 +189,7 @@ class ShipmentTest < ActiveSupport::TestCase
   # address_id
   # on a shipment with another id
   # another id wins
-  # FIXME
+  # FIXME - surprising result, relies on hash order
   test 'assigning nashville attributes, richmond id to durham shipment' do
     @shipment.update_attribute('address_id', @durham.id)
     hash = ActiveSupport::OrderedHash.new
@@ -203,7 +203,7 @@ class ShipmentTest < ActiveSupport::TestCase
   # address_id empty
   # on a shipment with another id
   # another id wins
-  # FIXME
+  # FIXME - surprising result, relies on hash order
   test 'assigning nashville attributes, empty id to durham shipment' do
     @shipment.update_attribute('address_id', @durham.id)
     hash = ActiveSupport::OrderedHash.new
