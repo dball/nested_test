@@ -19,8 +19,10 @@ class ShipmentTest < ActiveSupport::TestCase
     assert_equal @atlanta_attributes.merge('id' => 4), @shipment.address.attributes
   end
 
-  ## address_attributes without id always wins over address_id on an empty shipment
-
+  # address_id 
+  # address_attributes without id
+  # on an empty shipment
+  # address_attributes wins, creates a new address
   test 'assigning richmond id, atlanta attributes to empty shipment' do
     hash = ActiveSupport::OrderedHash.new
     hash['address_id'] = @richmond.id
@@ -29,6 +31,10 @@ class ShipmentTest < ActiveSupport::TestCase
     assert_equal @atlanta_attributes.merge('id' => 4), @shipment.address.attributes
   end
 
+  # address_attributes without id
+  # address_id 
+  # on an empty shipment
+  # address_attributes wins, creates a new address
   test 'assigning atlanta attributes, richmond id to empty shipment' do
     hash = ActiveSupport::OrderedHash.new
     hash['address_attributes'] = @atlanta_attributes
@@ -37,8 +43,10 @@ class ShipmentTest < ActiveSupport::TestCase
     assert_equal @atlanta_attributes.merge('id' => 4), @shipment.address.attributes
   end
 
-  ## address_id always wins over address_attributes with id on an empty shipment
-
+  # address_id
+  # address_attributes with id
+  # on an empty shipment
+  # address_id wins
   test 'assigning richmond id, nashville attributes to empty shipment' do
     hash = ActiveSupport::OrderedHash.new
     hash['address_id'] = @richmond.id
@@ -47,6 +55,10 @@ class ShipmentTest < ActiveSupport::TestCase
     assert_equal @richmond, @shipment.address
   end
 
+  # address_attributes with id
+  # address_id
+  # on an empty shipment
+  # address_id wins
   test 'assigning nashville attributes, richmond id to empty shipment' do
     hash = ActiveSupport::OrderedHash.new
     hash['address_attributes'] = @nashville.attributes
@@ -55,46 +67,56 @@ class ShipmentTest < ActiveSupport::TestCase
     assert_equal @richmond, @shipment.address
   end
 
-  ## address_attributes without id always loses over address_id on a shipment with different address
-
+  # address_id
+  # address_attributes without id
+  # on a shipment with another id
+  # address_attributes wins, creates new address
   test 'assigning richmond id, atlanta attributes to durham shipment' do
     @shipment.update_attribute('address_id', @durham.id)
     hash = ActiveSupport::OrderedHash.new
-    hash['address_attributes'] = @atlanta_attributes
     hash['address_id'] = @richmond.id
+    hash['address_attributes'] = @atlanta_attributes
     @shipment.update_attributes(hash)
     assert_equal @atlanta_attributes.merge('id' => 4), @shipment.address.attributes
   end
 
+  # address_attributes without id
+  # address_id
+  # on a shipment with another id
+  # address_attributes wins, creates new address
   test 'assigning atlanta attributes, richmond id to durham shipment' do
     @shipment.update_attribute('address_id', @durham.id)
     hash = ActiveSupport::OrderedHash.new
-    hash['address_id'] = @richmond.id
     hash['address_attributes'] = @atlanta_attributes
+    hash['address_id'] = @richmond.id
     @shipment.update_attributes(hash)
     assert_equal @atlanta_attributes.merge('id' => 4), @shipment.address.attributes
   end
 
-  ## address_attributes with id followed by address_id loses to the existing address ?!
-
-  test 'assigning richmond id, nashville attributes to durham shipment' do
-    @shipment.update_attribute('address_id', @durham.id)
-    hash = ActiveSupport::OrderedHash.new
-    hash['address_attributes'] = @nashville.attributes
-    hash['address_id'] = @richmond.id
-    @shipment.update_attributes(hash)
-    assert_equal @shipment.address, @durham
-  end
-
-  # address_id followed by address_attributes with id
-  # shipment has another address
+  # address_id
+  # address_attributes with id
+  # on a shipment with another id
   # address_id wins
-  test 'assigning nashville attributes, richmond id to durham shipment' do
+  test 'assigning richmond id, nashville attributes to durham shipment' do
     @shipment.update_attribute('address_id', @durham.id)
     hash = ActiveSupport::OrderedHash.new
     hash['address_id'] = @richmond.id
     hash['address_attributes'] = @nashville.attributes
     @shipment.update_attributes(hash)
     assert_equal @shipment.address, @richmond
+  end
+
+  # address_attributes with id
+  # address_id
+  # on a shipment with another id
+  # another id wins
+  # FIXME
+  test 'assigning nashville attributes, richmond id to durham shipment' do
+    @shipment.update_attribute('address_id', @durham.id)
+    hash = ActiveSupport::OrderedHash.new
+    hash['address_attributes'] = @nashville.attributes
+    hash['address_id'] = @richmond.id
+    @shipment.update_attributes(hash)
+    assert_equal @shipment.address, @durham
   end
 end
